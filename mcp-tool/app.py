@@ -97,24 +97,25 @@ def get_time_difference(timezone1: str = "UTC", timezone2: str = "America/New_Yo
     }
 
 
-# Create the Starlette app for HTTP transport
-app = mcp.streamable_http_app()
-
-
 def lambda_handler(event, context):
     """
     AWS Lambda handler function.
     Uses Mangum to adapt the ASGI app for Lambda.
+    Creates a fresh app instance for each invocation to avoid session manager reuse issues.
     """
     from mangum import Mangum
 
-    # Use lifespan="auto" to allow MCP session manager to initialize
+    # Create fresh app instance for each Lambda invocation
+    # This is required because StreamableHTTPSessionManager can only run once per instance
+    app = mcp.streamable_http_app()
     handler = Mangum(app, lifespan="auto")
     return handler(event, context)
 
 
+# For local development with uvicorn
 if __name__ == "__main__":
     import uvicorn
 
+    app = mcp.streamable_http_app()
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

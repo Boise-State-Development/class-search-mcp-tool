@@ -11,10 +11,11 @@ from zoneinfo import ZoneInfo
 
 from mcp.server.fastmcp import FastMCP
 
-# Initialize the MCP server
+# Initialize the MCP server in stateless mode for Lambda compatibility
 mcp = FastMCP(
     name="time-server",
     instructions="A simple MCP server that returns the current time in various formats and timezones.",
+    stateless_http=True,  # Required for Lambda/serverless environments
 )
 
 
@@ -107,7 +108,8 @@ def lambda_handler(event, context):
     """
     from mangum import Mangum
 
-    handler = Mangum(app, lifespan="off")
+    # Use lifespan="auto" to allow MCP session manager to initialize
+    handler = Mangum(app, lifespan="auto")
     return handler(event, context)
 
 

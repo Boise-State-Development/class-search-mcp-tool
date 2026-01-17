@@ -42,6 +42,12 @@ export CDK_IMAGE_TAG="${CDK_IMAGE_TAG:-latest}"
 export CDK_LAMBDA_MEMORY_MB="${CDK_LAMBDA_MEMORY_MB:-512}"
 export CDK_LAMBDA_TIMEOUT_SECONDS="${CDK_LAMBDA_TIMEOUT_SECONDS:-30}"
 
+# OpenSearch configuration
+export CDK_OPENSEARCH_HOST="${CDK_OPENSEARCH_HOST:-}"
+export CDK_OPENSEARCH_REGION="${CDK_OPENSEARCH_REGION:-us-west-2}"
+export CDK_OPENSEARCH_ACCOUNT_ID="${CDK_OPENSEARCH_ACCOUNT_ID:-}"
+export CDK_OPENSEARCH_DOMAIN_NAME="${CDK_OPENSEARCH_DOMAIN_NAME:-}"
+
 # Build CDK context parameters string
 build_context_params() {
     local context_params=""
@@ -57,6 +63,20 @@ build_context_params() {
         context_params="${context_params} --context awsAccountId=\"${CDK_AWS_ACCOUNT_ID}\""
     fi
 
+    # OpenSearch context parameters
+    if [[ -n "${CDK_OPENSEARCH_HOST:-}" ]]; then
+        context_params="${context_params} --context opensearchHost=\"${CDK_OPENSEARCH_HOST}\""
+    fi
+    if [[ -n "${CDK_OPENSEARCH_REGION:-}" ]]; then
+        context_params="${context_params} --context opensearchRegion=\"${CDK_OPENSEARCH_REGION}\""
+    fi
+    if [[ -n "${CDK_OPENSEARCH_ACCOUNT_ID:-}" ]]; then
+        context_params="${context_params} --context opensearchAccountId=\"${CDK_OPENSEARCH_ACCOUNT_ID}\""
+    fi
+    if [[ -n "${CDK_OPENSEARCH_DOMAIN_NAME:-}" ]]; then
+        context_params="${context_params} --context opensearchDomainName=\"${CDK_OPENSEARCH_DOMAIN_NAME}\""
+    fi
+
     echo "${context_params}"
 }
 
@@ -70,6 +90,10 @@ show_config() {
     log_info "  Image Tag:         ${CDK_IMAGE_TAG}"
     log_info "  Lambda Memory:     ${CDK_LAMBDA_MEMORY_MB} MB"
     log_info "  Lambda Timeout:    ${CDK_LAMBDA_TIMEOUT_SECONDS} seconds"
+    log_info "  OpenSearch Host:   ${CDK_OPENSEARCH_HOST:-<not set>}"
+    log_info "  OpenSearch Region: ${CDK_OPENSEARCH_REGION}"
+    log_info "  OpenSearch Account: ${CDK_OPENSEARCH_ACCOUNT_ID:-<not set>}"
+    log_info "  OpenSearch Domain: ${CDK_OPENSEARCH_DOMAIN_NAME:-<not set>}"
 }
 
 # Export functions for use in other scripts

@@ -122,9 +122,13 @@ docker-compose up --build
 
 1. Fork this repository
 2. Set up AWS OIDC provider for GitHub Actions (see [CLAUDE.md](CLAUDE.md) for details)
-3. Add GitHub Secret:
+3. Add GitHub Secrets:
    - `AWS_DEPLOY_ROLE_ARN`: IAM role ARN for GitHub Actions to assume
-4. Push to `main` branch to trigger deployment
+4. Add GitHub Variables:
+   - `CDK_AWS_ACCOUNT_ID`: Lambda deployment account ID
+   - `CDK_OPENSEARCH_ACCOUNT_ID`: OpenSearch account ID (if cross-account)
+   - `CDK_PROJECT_PREFIX`: Resource naming prefix (optional)
+5. Push to `main` branch to trigger deployment
 
 ### Manual Deployment
 
@@ -159,14 +163,26 @@ export CDK_AWS_REGION="us-west-2"
 
 ## Configuration
 
+### Required Variables
+
+| Variable | Description |
+|----------|-------------|
+| `CDK_AWS_ACCOUNT_ID` | AWS account ID for Lambda deployment |
+| `CDK_OPENSEARCH_ACCOUNT_ID` | AWS account ID where OpenSearch is hosted (for cross-account access) |
+
+### Optional Variables
+
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `CDK_PROJECT_PREFIX` | Resource naming prefix | `mcp-docker-lambda` |
 | `CDK_AWS_REGION` | AWS region | `us-west-2` |
-| `CDK_LAMBDA_MEMORY_MB` | Lambda memory | `512` |
-| `CDK_LAMBDA_TIMEOUT_SECONDS` | Lambda timeout | `30` |
+| `CDK_LAMBDA_MEMORY_MB` | Lambda memory (MB) | `512` |
+| `CDK_LAMBDA_TIMEOUT_SECONDS` | Lambda timeout (seconds) | `30` |
+| `CDK_OPENSEARCH_HOST` | OpenSearch domain endpoint | Dev default |
+| `CDK_OPENSEARCH_REGION` | OpenSearch region | `us-west-2` |
+| `CDK_OPENSEARCH_DOMAIN_NAME` | OpenSearch domain name | `opensearch-dev-01` |
 
-See [CLAUDE.md](CLAUDE.md) for detailed documentation.
+See [CLAUDE.md](CLAUDE.md) for detailed documentation and `.env.example` for all variables.
 
 ## License
 
